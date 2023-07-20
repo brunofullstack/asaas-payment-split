@@ -66,9 +66,6 @@ function wp_g_h_w_plugin_settings_page()
             <?php echo esc_html(get_admin_page_title()); ?>
         </h1>
         
-        <label>
-        Para fazer Split de cobranças é necessário que você tenha o walletId de todas as contas Asaas envolvidas nas transação. Utilize as configurações abaixo para inserir as chaves.
-        </label>
 
         
 
@@ -80,7 +77,7 @@ function wp_g_h_w_plugin_settings_page()
             <?php include 'form.html'; ?>
 
 
-            <?php submit_button(); ?>
+            <?php //submit_button(); ?>
         </form>
 
     </div>

@@ -10,105 +10,112 @@
     <input type="hidden" name="my_form" value="1">
     <table class="form-table">
         <tbody id="inputs-container">
-                <tr>
-                    <th scope="row"><label for="wp_g_h_w_plugin_altura">WalletId:</label></th>
-                    <td><input name="wp_asaas_split_plugin_wallet" type="text" id="wp_asaas_split_plugin_wallet"
-                            class="regular-text"></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="wp_asaas_split_plugin_porcentagem">Porcentagem destinada a
-                            carteira:</label></th>
-                    <td>
-                        <input name="wp_asaas_split_plugin_porcentagem" type="number"
-                            id="wp_asaas_split_plugin_porcentagem" min="0" max="100" step="0.01">
-                        <button type="button" class="mr-2 button button-secondary">remover</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="wp_g_h_w_plugin_altura">WalletId:</label></th>
-                    <td><input name="wp_asaas_split_plugin_wallet" type="text" id="wp_asaas_split_plugin_wallet"
-                            class="regular-text"></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="wp_asaas_split_plugin_porcentagem">Porcentagem destinada a
-                            carteira:</label></th>
-                    <td>
-                        <input name="wp_asaas_split_plugin_porcentagem" type="number"
-                            id="wp_asaas_split_plugin_porcentagem" min="0" max="100" step="0.01">
-                        <button type="button" class="mr-2 button button-secondary">remover</button>
-                    </td>
-                </tr>
+            <tr>
+                <th scope="row"><label for="wp_g_h_w_plugin_altura">WalletId:</label></th>
+                <td><input name="wp_asaas_split_plugin_wallet" type="text" id="wp_asaas_split_plugin_wallet"
+                        value="AHQJygehB7pRHUYCdW998" class="regular-text"></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="wp_asaas_split_plugin_porcentagem">Porcentagem destinada a
+                        carteira:</label></th>
+                <td>
+                    <input name="wp_asaas_split_plugin_porcentagem" type="number" id="wp_asaas_split_plugin_porcentagem"
+                        min="0" max="100" step="0.01" value="100"><span>%</span>
+                </td>
+            </tr>
         </tbody>
     </table>
 
 </form>
-<button onclick="adicionarInput()" class="button button-primary">Adicionar carteira</button>
+<button onclick="adicionarInput()" class="button button-secondary">Adicionar carteira</button>
 
-
-
-<h2>Adicionar e Remover Inputs</h2>
-
-<button onclick="adicionarInput()">Adicionar Input</button>
-
-<div id="inputs-container">
-    <!-- Os inputs serão adicionados aqui -->
-</div>
 
 <script>
-    var contador = 0;
+    let contador = 0;
 
     function adicionarInput() {
         contador++;
 
-        var container = document.getElementById("inputs-container");
+        const container = document.getElementById("inputs-container");
 
-        var tr = document.createElement("tr");
-        var tr2 = document.createElement("tr");
-        var th = document.createElement("th");
-        th.setAttribute('scope', 'row');
-        var th2 = document.createElement("th");
+        const tr = document.createElement("tr");
+        const tr2 = document.createElement("tr");
+
+        const th1 = document.createElement("th");
+        th1.setAttribute('scope', 'row');
+        const th2 = document.createElement("th");
         th2.setAttribute('scope', 'row');
-        var td = document.createElement("td");
-        var td2 = document.createElement("td");
-        var label1 = document.createElement("label");
-        label1.innerHTML = "WalletId:";
-        var label2 = document.createElement("label");
-        label2.innerHTML = "Porcentagem destinada a carteira:";
 
-        var inputWallet = document.createElement("input");
+        const td1 = document.createElement("td");
+        const td2 = document.createElement("td");
+
+        const label1 = document.createElement("label");
+        label1.textContent = "WalletId:";
+        const label2 = document.createElement("label");
+        label2.textContent = "Porcentagem destinada a carteira:";
+
+        const inputWallet = document.createElement("input");
         inputWallet.type = "text";
         inputWallet.name = "wallet_" + contador;
 
-        var inputPercentage = document.createElement("input");
+        const inputPercentage = document.createElement("input");
         inputPercentage.type = "text";
         inputPercentage.name = "percentage_" + contador;
+        inputPercentage.addEventListener("inputPercentage", verificarSomaPercentual);
 
-        var novoBotao = document.createElement("button");
-        novoBotao.innerHTML = "Remover";
-        novoBotao.type = "button";
-        novoBotao.onclick = function () {
-            container.removeChild(novoInput);
-            container.removeChild(novoBotao);
-        };
+        const removerBotao = document.createElement("button");
+        removerBotao.classList.add("mr-2", "button", "button-danger");
+        removerBotao.textContent = "X Remover";
+        removerBotao.type = "button";
+        removerBotao.addEventListener("click", function () {
+            container.removeChild(tr);
+            container.removeChild(tr2);
+        });
 
-        th.appendChild(label1);
-        td.appendChild(inputWallet);
-        td.appendChild(novoBotao);
+        th1.appendChild(label1);
+        td1.appendChild(inputWallet);
+        td1.appendChild(removerBotao);
         th2.appendChild(label2);
         td2.appendChild(inputPercentage);
-        td2.appendChild(novoBotao);
-        tr.appendChild(th);
-        tr.appendChild(td);
+
+        tr.appendChild(th1);
+        tr.appendChild(td1);
         tr2.appendChild(th2);
         tr2.appendChild(td2);
+
         container.appendChild(tr);
         container.appendChild(tr2);
-        // container.appendChild(novoInput);
-        // container.appendChild(novoBotao);
+
+    }
+
+    function verificarSomaPercentual() {
+        console.log("Input digitado: " + inputPercentage.value);
+        let soma = 0;
+
+        // Calcula a soma de todos os números de entrada
+        for (let i = 0; i < inputs.length; i++) {
+            const valor = parseFloat(inputs[i].value);
+            if (!isNaN(valor)) {
+                soma += valor;
+            }
+        }
+
+        // Verifica se a soma é maior que 100
+        if (soma > 100) {
+            return false;
+        }
+
+        return true;
     }
 </script>
+
 <style>
     .mr-2 {
-        margin-right: 20px;
+        margin-left: 20px;
+    }
+
+    .button-danger {
+        color: red !important;
+        border-color: red !important;
     }
 </style>
