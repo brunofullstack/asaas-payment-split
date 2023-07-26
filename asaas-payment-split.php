@@ -12,6 +12,145 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
+// ASAAS WEBHOOK
+// Função de callback para a rota personalizada POST
+
+add_action( 'rest_api_init', 'wp_asaas_split_registrar_rotas' );
+// Registrando a rota personalizada para tratar as requisições POST do Asaas Webhook
+function wp_asaas_split_registrar_rotas() {
+    register_rest_route(
+        'asaas-payment-split/v1', // Prefixo da rota
+        '/asaas-webhook', // Caminho da rota
+        array(
+            'methods'  => 'POST', // Método permitido (POST)
+            'callback' => 'wp_plugin_asaas_split_callback', // Função de callback
+            'permission_callback' => '__return_true',
+        )
+    );
+}
+function wp_plugin_asaas_split_callback( WP_REST_Request $request ) {
+    // Recupere os dados enviados na requisição POST
+    $data = $request->get_params();
+    $payment_status = $data["event"];
+
+    switch ( $payment_status ) {
+        case 'PAYMENT_CREATED':
+            // Geração de nova cobrança.
+            echo 'Geração de nova cobrança.';
+            break;
+
+        case 'PAYMENT_AWAITING_RISK_ANALYSIS':
+            // Pagamento em cartão aguardando aprovação pela análise manual de risco.
+            echo 'Pagamento em cartão aguardando aprovação pela análise manual de risco.';
+            break;
+
+        case 'PAYMENT_APPROVED_BY_RISK_ANALYSIS':
+            // Pagamento em cartão aprovado pela análise manual de risco.
+            echo 'Pagamento em cartão aprovado pela análise manual de risco.';
+            break;
+
+        case 'PAYMENT_REPROVED_BY_RISK_ANALYSIS':
+            // Pagamento em cartão reprovado pela análise manual de risco.
+            echo 'Pagamento em cartão reprovado pela análise manual de risco.';
+            break;
+
+        case 'PAYMENT_UPDATED':
+            // Alteração no vencimento ou valor de cobrança existente.
+            echo 'Alteração no vencimento ou valor de cobrança existente.';
+            break;
+
+        case 'PAYMENT_CONFIRMED':
+            // Cobrança confirmada (pagamento efetuado, porém o saldo ainda não foi disponibilizado).
+            echo 'Cobrança confirmada (pagamento efetuado, porém o saldo ainda não foi disponibilizado).';
+            break;
+
+        case 'PAYMENT_RECEIVED':
+            // Cobrança recebida.
+            echo 'Cobrança recebida.';
+            break;
+
+        case 'PAYMENT_ANTICIPATED':
+            // Cobrança antecipada.
+            echo 'Cobrança antecipada.';
+            break;
+
+        case 'PAYMENT_OVERDUE':
+            // Cobrança vencida.
+            echo 'Cobrança vencida.';
+            break;
+
+        case 'PAYMENT_DELETED':
+            // Cobrança removida.
+            echo 'Cobrança removida.';
+            break;
+
+        case 'PAYMENT_RESTORED':
+            // Cobrança restaurada.
+            echo 'Cobrança restaurada.';
+            break;
+
+        case 'PAYMENT_REFUNDED':
+            // Cobrança estornada.
+            echo 'Cobrança estornada.';
+            break;
+
+        case 'PAYMENT_REFUND_IN_PROGRESS':
+            // Estorno em processamento (liquidação já está agendada, cobrança será estornada após executar a liquidação).
+            echo 'Estorno em processamento (liquidação já está agendada, cobrança será estornada após executar a liquidação).';
+            break;
+
+        case 'PAYMENT_RECEIVED_IN_CASH_UNDONE':
+            // Recebimento em dinheiro desfeito.
+            echo 'Recebimento em dinheiro desfeito.';
+            break;
+
+        case 'PAYMENT_CHARGEBACK_REQUESTED':
+            // Recebido chargeback.
+            echo 'Recebido chargeback.';
+            break;
+
+        case 'PAYMENT_CHARGEBACK_DISPUTE':
+            // Em disputa de chargeback (caso sejam apresentados documentos para contestação).
+            echo 'Em disputa de chargeback (caso sejam apresentados documentos para contestação).';
+            break;
+
+        case 'PAYMENT_AWAITING_CHARGEBACK_REVERSAL':
+            // Disputa vencida, aguardando repasse da adquirente.
+            echo 'Disputa vencida, aguardando repasse da adquirente.';
+            break;
+
+        case 'PAYMENT_DUNNING_RECEIVED':
+            // Recebimento de negativação.
+            echo 'Recebimento de negativação.';
+            break;
+
+        case 'PAYMENT_DUNNING_REQUESTED':
+            // Requisição de negativação.
+            echo 'Requisição de negativação.';
+            break;
+
+        case 'PAYMENT_BANK_SLIP_VIEWED':
+            // Boleto da cobrança visualizado pelo cliente.
+            echo 'Boleto da cobrança visualizado pelo cliente.';
+            break;
+
+        case 'PAYMENT_CHECKOUT_VIEWED':
+            // Fatura da cobrança visualizada pelo cliente.
+            echo 'Fatura da cobrança visualizada pelo cliente.';
+            break;
+
+        default:
+            // Resposta não reconhecida.
+            echo 'Resposta não reconhecida.';
+            break;
+    }
+
+    // Responda ao Asaas Webhook com um status de sucesso
+    return rest_ensure_response( array( 'status' => 'sucesso' ) );
+}
+
 /* CONFIG PAGE */
 // Adiciona uma página de configuração para o plugin
 add_action('admin_menu', 'wp_g_h_w_plugin_menu');
@@ -155,6 +294,8 @@ function get_setted_values()
         include 'form.html';
     }
 }
+
+
 
 // Registro de ativação do plugin
 function meu_plugin_ativacao()
