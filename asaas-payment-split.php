@@ -146,10 +146,44 @@ function wp_plugin_asaas_split_callback( WP_REST_Request $request ) {
             echo 'Resposta não reconhecida.';
             break;
     }
-
+    
     // Responda ao Asaas Webhook com um status de sucesso
     return rest_ensure_response( array( 'status' => 'sucesso' ) );
 }
+
+
+// Registrando o gancho para capturar o evento de pagamento
+add_action('woocommerce_new_order', 'meu_plugin_acrescentar_dados_pagamento', 10, 1);
+
+function meu_plugin_acrescentar_dados_pagamento($order_id) {
+    // Obter o objeto do pedido
+    $order = wc_get_order($order_id);
+
+    // Verificar se o pedido foi pago (opcional)
+    if ($order->is_paid()) {
+        // Obter o JSON atual do pagamento
+        $payment_data = $order->get_payment_tokens();
+
+        // Acrescentar dados personalizados ao JSON de pagamentos
+        $split = [
+            [
+                "walletId" => "48548710-9baa-4ec1-a11f-9010193527c6",
+                "fixedValue" => 20
+            ],
+            [
+                "walletId" => "0b763922-aa88-4cbe-a567-e3fe8511fa06",
+                "percentualValue" => 10
+            ]
+        ];
+
+        $payment_data['split'] = $split;
+
+        // Atualizar os dados do pagamento com os dados personalizados
+        $order->update_meta_data('_payment_tokens', $payment_data);
+        $order->save(); // Salvar o pedido
+    }
+}
+
 
 /* CONFIG PAGE */
 // Adiciona uma página de configuração para o plugin
